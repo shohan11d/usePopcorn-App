@@ -19,7 +19,7 @@ root.render(
   <React.StrictMode>
     {/* <App /> */}
 
-    <StarRating maxRating={5} />
+    <StarRating maxRating={"dfdf"} />
     <StarRating
       size={24}
       color="red"
