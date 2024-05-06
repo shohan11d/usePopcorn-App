@@ -185,7 +185,7 @@ function WatchedMovie({ watchedData }) {
 
 function Movie2({ mov }) {
   return (
-    <div className="flex items-center gap-5 mt-5 border-b border-neutral-600 pb-5">
+    <div className="flex items-center gap-5 mt-5 border-b border-neutral-500 pb-5">
       <img src={mov.Poster} className="h-16" alt={`${mov.Title} poster`} />
       <div className="space-y-2">
         <h3>{mov.Title}</h3>
