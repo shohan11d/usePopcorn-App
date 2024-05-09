@@ -1,57 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useState } from "react";
+import StarRating from "./StarRating";
 
-const movieData = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt0133093",
-    Title: "The Matrix",
-    Year: "1999",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt6751668",
-    Title: "Parasite",
-    Year: "2019",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
-  },
-];
-
-const watchedData = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-    runtime: 148,
-    imdbRating: 8.8,
-    userRating: 10,         
-  },
-  {
-    imdbID: "tt0088763",
-    Title: "Back to the Future",
-    Year: "1985",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
-    runtime: 116,
-    imdbRating: 8.5,
-    userRating: 9,
-  },
-];
 const KEY = "2f74e8e2";
 export default function App() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [watched, setWatched] = useState([]);
+
+  function handleSelect(id) {
+    setSelectedId((curId) => (id === curId ? null : id));
+  }
 
   useEffect(
     function () {
@@ -61,8 +23,7 @@ export default function App() {
           `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
         );
         const data = await res.json();
-        console.log(data);
-        data.Response === "False"? setMovies([]):setMovies(data.Search);
+        data.Response === "False" ? setMovies([]) : setMovies(data.Search);
         setIsLoading(false);
       }
 
@@ -70,6 +31,24 @@ export default function App() {
     },
     [query]
   );
+
+  useEffect(
+    function () {
+      async function fetchMovieDetails() {
+        const data = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
+        );
+        const res = await data.json();
+
+        setSelectedMovie(() => (res.Response === "False" ? null : res));
+      }
+      fetchMovieDetails();
+    },
+    [selectedId]
+  );
+  function handleTest(){
+    setSelectedMovie(null)
+  }
   return (
     <div className="mx-2 mt-2 text-white">
       <Nav>
@@ -83,17 +62,37 @@ export default function App() {
             movies={movies}
             isLoading={isLoading}
             setIsLoading={setIsLoading}
+            onSelect={handleSelect}
           />
         </Box>
         <Box>
-          <MoviesSummary watchedData={watchedData} />
-          <WatchedMovie watchedData={watchedData} />
+          {selectedMovie ? (
+            <MovieDetails
+              selectedMovie={selectedMovie}
+              setSelectedMovie={setSelectedMovie}
+              setWatched={setWatched}
+            />
+          ) : (
+            <>
+              <MoviesSummary watched={watched} />
+              <WatchedMovie
+                watchedData={watched}
+                setWatched={setWatched}
+                watched={watched}
+                onSelect={handleSelect}
+              />
+            </>
+          )}
         </Box>
+        <Clear handleTest={handleTest}/>
       </Main>
     </div>
   );
 }
 
+function Clear({handleTest}){
+  return <button onClick={handleTest}>x</button>
+}
 function average(arr) {
   return arr.reduce((acc, cur, i, array) => acc + cur / array.length, 0);
 }
@@ -117,6 +116,9 @@ function Logo() {
 }
 
 function Search({ query, setQuery }) {
+  const inputEl = useRef(null);
+   
+
   return (
     <div className="flex ">
       <input
@@ -130,7 +132,7 @@ function Search({ query, setQuery }) {
   );
 }
 
-function Results({movies}) {
+function Results({ movies }) {
   return (
     <div className="">
       <p>
@@ -156,23 +158,30 @@ function Box({ children }) {
   );
 }
 
-function MovieList({ movies, isLoading, setIsLoading }) {
-  return <div>
-   {isLoading ? <Loader />: (
-      <div>
-      {movies.map((mov) => (
-        <Movie mov={mov} key={mov.imdbID} />
-      ))}
-    </div>)
-    }
-  </div>
+function MovieList({ movies, isLoading, setIsLoading, onSelect }) {
+  return (
+    <div>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div>
+          {movies.map((mov) => (
+            <Movie mov={mov} onSelect={onSelect} key={mov.imdbID} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 function Loader() {
   return <p className="text-lg text-center">LOADING...</p>;
 }
-function Movie({ mov }) {
+function Movie({ mov, onSelect }) {
   return (
-    <div className="flex items-center gap-5 mt-5 border-b border-neutral-600 pb-5">
+    <div
+      onClick={() => onSelect(mov.imdbID)}
+      className=" cursor-pointer duration-500 rounded-md hover:bg-[#7950f22c] flex items-center gap-5 mt-5 border-b border-neutral-600 pb-5"
+    >
       <img src={mov.Poster} className="h-16" alt={`${mov.Title} poster`} />
       <div className="space-y-2">
         <h3>{mov.Title}</h3>
@@ -184,17 +193,16 @@ function Movie({ mov }) {
     </div>
   );
 }
-
-function MoviesSummary({ watchedData }) {
+function MoviesSummary({ watched }) {
   return (
-    <div className="bg-violet-800 rounded-md px-2 py-5">
+    <div className="bg-[#6741D9] rounded-md px-2 py-5">
       <h1 className="uppercase text-md">Movies You Watched</h1>
       <div className="flex gap-5">
         <p className="space-x-2">
-          <span>🎞️ movies: {watchedData.length}</span>
+          <span>🎞️ movies: {watched.length}</span>
         </p>
         <p className="space-x-2">
-          <span>⭐️ {watchedData.map((el) => el.imdbRating)}</span>
+          {/* <span>⭐️ {watched.map((el) => el.imdbRating)}</span> */}
         </p>
         <p className="space-x-2">
           <span>🌟</span>
@@ -208,27 +216,89 @@ function MoviesSummary({ watchedData }) {
   );
 }
 
-function WatchedMovie({ watchedData }) {
+function WatchedMovie({  onSelect, watched, setWatched }) {
   return (
     <div>
-      {watchedData.map((mov) => (
-        <Movie mov={mov} key={mov.imdbID} />
+      {watched.map((mov) => (
+        <Movie2
+          mov={mov}
+          onSelect={onSelect}
+          setWatched={setWatched}
+          key={crypto.randomUUID()}
+        />
       ))}
     </div>
   );
 }
 
 function Movie2({ mov }) {
-  return (
-    <div className="flex items-center gap-5 mt-5 border-b border-neutral-500 pb-5">
-      <img src={mov.Poster} className="h-16" alt={`${mov.Title} poster`} />
-      <div className="space-y-2">
-        <h3>{mov.Title}</h3>
-        <p>
-          <span>🗓 </span>
-          <span className="ml-2">{mov.Year}</span>
-        </p>
+    return (
+      <div className="flex items-center gap-5 mt-5 border-b border-neutral-500 pb-5">
+        
+        <img src={mov.Poster} className="h-16" alt={`${mov.Title} poster`} />
+        <div className="space-y-2">
+          <h3>{mov.Title}</h3>
+         <div className="flex gap-4">
+          <p>
+            <span> ⭐️ {mov.imdbRating}</span>
+          </p>
+          <p>
+            <span> 🌟️ {mov.userRating}</span>
+
+          </p>
+          <p>
+            <span> 🕧️ {mov.Runtime}</span>
+
+          </p>
+         </div>
+        </div>
       </div>
+    );
+}
+function MovieDetails({
+  selectedMovie,
+  watched,
+  setWatched,
+  setSelectedMovie,
+}) {
+  const [rating, setRating] = useState(0);
+  const { imdbRating, Runtime, Title, Poster } = selectedMovie;
+  function handleSetRating(userRating) {
+    setRating((rating) => userRating);
+    setWatched((watched) => [
+      ...watched,
+      { imdbRating, Runtime, Title, Poster, userRating: rating },
+    ]);
+  }
+  return (
+    <div className="">
+      <div className="grid place-items-center grid-cols-2 bg-[#343A40]">
+      {/* <button className="p-2 bg-blue-600 rounded" onClick={setSelectedMovie(null)}>x</button> */}
+        {" "}
+        <img
+          src={selectedMovie.Poster}
+          className="w-[80%] justify-self-start"
+          alt=""
+        />{" "}
+        <div className="p-4 justify-self-center space-y-2">
+          {" "}
+          <h1 className="text-2xl">{selectedMovie.Title}</h1>{" "}
+          <p>
+            <span>
+              {selectedMovie.Released} {selectedMovie.Runtime}
+            </span>
+          </p>{" "}
+          <p>{selectedMovie.Genre}</p>{" "}
+          <p>⭐️ {selectedMovie.imdbRating} IMDB rating </p>{" "}
+        </div>{" "}
+      </div>{" "}
+      <StarRating
+        className="mt-5 flex justify-center"
+        onSetRating={handleSetRating}
+        maxRating={10}
+        size={24}
+      />
+      <p className="mt-5 text-justify">{selectedMovie.Plot}</p>
     </div>
   );
 }
