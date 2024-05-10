@@ -2,7 +2,7 @@
 An app that helps pack items and makes sure you don't forget  to watch your favourite movie. Made with React JS. 
 
 
-## Installation :
+## Installation :-
 ```
 git clone "repo name"
 cd repo name
