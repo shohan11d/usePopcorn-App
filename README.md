@@ -4,8 +4,8 @@ An app that helps pack items and makes sure you don't forget  to watch your favo
 
 ## Installation 
 ```
-git clone "repo name"
-cd repo name
+git clone https://github.com/shohan11d/usePopcorn-App.git
+cd usePopcorn-App
 npm i
 npm run start 
 ```
