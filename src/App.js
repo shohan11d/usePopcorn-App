@@ -15,22 +15,6 @@ export default function App() {
     setSelectedId((curId) => (id === curId ? null : id));
   }
 
-  useEffect(
-    function () {
-      async function fetchMovies() {
-        setIsLoading(true);
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
-        );
-        const data = await res.json();
-        data.Response === "False" ? setMovies([]) : setMovies(data.Search);
-        setIsLoading(false);
-      }
-
-      fetchMovies();
-    },
-    [query]
-  );
 
   useEffect(
     function () {
