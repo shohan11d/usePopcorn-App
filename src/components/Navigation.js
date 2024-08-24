@@ -15,8 +15,15 @@ function Logo() {
 }
 
 // Search Component for Nav Area
-function Search() {
-  return <input type="text" className="search" />;
+function Search({ query, setQuery }) {
+  return (
+    <input
+      type="text"
+      className="search"
+      value={query}
+      onChange={(e) => setQuery(e.target.value)}
+    />
+  );
 }
 
 // Results Component for Nav Area
