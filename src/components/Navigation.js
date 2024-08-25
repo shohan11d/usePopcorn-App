@@ -1,3 +1,5 @@
+import Movie from './Movie';
+
 export { NavBar, Logo, NumResults, Search };
 
 // Main Nav Component
@@ -27,10 +29,10 @@ function Search({ query, setQuery }) {
 }
 
 // Results Component for Nav Area
-function NumResults() {
+function NumResults({ movies }) {
   return (
     <div>
-      <p>Found {3} movies</p>
+      <p>Found {movies?.length} movies</p>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import Movie from './Movie';
-function MovieList({ movies }) {
+function MovieList({ movies, setSelected, onSelect }) {
 //   console.log(movies);
 
   //   const { Title, Year, imdbID, Poster } = movies;
@@ -7,7 +7,7 @@ function MovieList({ movies }) {
   return (
     <div>
       {movies?.map((movie) => (
-        <Movie movie={movie} key={crypto.randomUUID} />
+        <Movie movie={movie} onSelect={onSelect} setSelected={setSelected} key={crypto.randomUUID()} />
       ))}
     </div>
   );
