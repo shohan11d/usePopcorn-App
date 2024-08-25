@@ -3,16 +3,23 @@ import { useState } from 'react';
 import { NavBar, Logo, NumResults, Search } from './components/Navigation';
 import Main from './components/Main';
 import Box from './components/Box';
+import MovieList from './components/MovieList';
+import Movie from './components/Movie';
 
-const KEY = "2f74e8e2"
+const KEY = '2f74e8e2';
 
 function App() {
   const [query, setQuery] = useState('');
-  const [movies, setMovies] = useState([])
+  const [movies, setMovies] = useState([]);
+  const [selectedId, setSelectedId] = useState('')
 
+  async function fetchMovies() {
+    fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}`).then((res) =>
+      res.json().then((data) => setMovies(data.Search))
+    );
+  }
 
- const res = fetch(`http://www.omdbapi.com/?apikey=[${KEY}]&`).then((res)=>res.json()) 
- console.log(res)
+  fetchMovies();
   return (
     <>
       <NavBar>
@@ -21,8 +28,8 @@ function App() {
         <NumResults />
       </NavBar>
       <Main>
-        <Box />
-        <Box />
+        <Box><MovieList movies={movies} /></Box>
+        <Box></Box>
       </Main>
     </>
   );

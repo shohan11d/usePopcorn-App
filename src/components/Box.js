@@ -1,7 +1,7 @@
-function Box() {
+function Box({children}) {
     return (
         <div className="box">
-            box
+            {children}
         </div>
     )
 }
