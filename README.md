@@ -1,17 +1,8 @@
-<h2 style="text-align: center;">usePopcorn App </h2>
-An app that helps pack items and makes sure you don't forget  to watch your favourite movie. Made with React JS. 
+# React + Vite
 
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Installation 
-```
-git clone https://github.com/shohan11d/usePopcorn-App.git
-cd usePopcorn-App
-npm i
-npm run start 
-```
-###  
+Currently, two official plugins are available:
 
- 
-
- 
- 
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
