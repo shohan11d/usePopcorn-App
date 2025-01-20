@@ -1,7 +1,20 @@
+import Header from './components/Header';
+import Logo from './components/Logo';
+import Result from './components/Result';
+import Search from './components/Search';
 
 function App() {
-
-  return <div className="underline">hello world</div>;
+  return (
+    <>
+      <div>
+        <Header>
+          <Logo />
+          <Result />
+          <Search />
+        </Header>
+      </div>
+    </>
+  );
 }
 
 export default App;
