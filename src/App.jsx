@@ -9,8 +9,8 @@ function App() {
       <div>
         <Header>
           <Logo />
-          <Result />
           <Search />
+          <Result />
         </Header>
       </div>
     </>

@@ -1,5 +1,5 @@
 function Result() {
-  return <div>Result</div>;
+  return <div> Found Result</div>;
 }
 
 export default Result;
