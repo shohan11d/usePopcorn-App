@@ -1,5 +1,5 @@
 function Logo() {
-  return <p className="text-2xl"> 🍿 usePopCorn</p>;
+  return <p className="text-xl font-bold"> 🍿 usePopCorn</p>;
 }
 
 export default Logo;

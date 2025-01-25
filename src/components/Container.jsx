@@ -1,6 +1,6 @@
 function Container({children}) {
     return (
-        <div className="grid grid-cols-2">
+        <div className="flex justify-center  justify-items-center">
             {children}
             
         </div>
