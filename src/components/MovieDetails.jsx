@@ -17,7 +17,7 @@ function MovieDetails({ data }) {
     </div>
 <div className="flex items-center justify-center p-5  ">
 
-<StarRating className="" size={30}/>
+<StarRating className="" size={30} maxRating={10}/>
 </div>
     </div>
   
