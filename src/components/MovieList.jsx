@@ -1,11 +1,10 @@
 import ListedMovie from "./ListedMovie"
 
-function MovieList({tempMovieData}) {
-    console.log(tempMovieData)
+function MovieList({movies , onSelect}) {
     return (
         <div>
-            {tempMovieData.map((movie) => (
-            <ListedMovie movie={movie} key={movie.id}/>))}
+            {movies?.map((movie) => (
+            <ListedMovie movie={movie} onSelect={onSelect} key={movie.imdbID}/>))}
         </div>
     )
 }

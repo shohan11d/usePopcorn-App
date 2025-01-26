@@ -1,6 +1,6 @@
-function ListedMovie({ movie }) {
+function ListedMovie({ movie , onSelect }) {
   return (
-      <div key={movie.imdbID} className="flex   px-6 py-4 border-b border-[#55535371]  gap-4">
+      <div key={movie.imdbID} className="flex   px-6 py-4 border-b border-[#55535371]  gap-4" onClick={() => onSelect(movie.imdbID)}>
         <img src={movie.Poster}  className="h-[70px]" alt={movie.Title} />
         <div> 
           <h2 className="text-lg">{movie.Title}</h2>

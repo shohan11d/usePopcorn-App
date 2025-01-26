@@ -7,6 +7,7 @@ import Search from './components/Search';
 import MovieList from './components/MovieList';
 import MovieDetails from './components/MovieDetails';
 import WatchedMovieList from './components/WatchedMovieList';
+import { useEffect, useState } from 'react';
 
 const tempMovieData = [
   {
@@ -56,23 +57,57 @@ const tempWatchedData = [
 ];
 
 const KEY = '2f74e8e2';
-console.log(KEY, tempMovieData, tempWatchedData)
 function App() {
+  const [query, setQuery] = useState('harry');
+  const [movies, setMovies] = useState();
+  const [watchedMovies, setWatchedMovies] = useState([]);
+  const [selected, setSelected] = useState('');
+
+  function handleSeleted(id) {
+    setSelected((selected) => (selected === id ? '' : id));
+  }
+  useEffect(
+    function () {
+      async function fetchMovies() {
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+        );
+        const data = await res.json();
+        setMovies(data.Search);
+      }
+      fetchMovies();
+    },
+    [query]
+  );
   return (
     <>
       <div>
         <Header>
           <Logo />
-          <Search />
-          <Result />
+          <Search query={query} setQuery={setQuery} />
+          <Result movies={movies} />
         </Header>
         <Container>
           <Box>
-            <MovieList tempMovieData={tempMovieData}/>
+            <MovieList movies={movies} onSelect={handleSeleted} />
           </Box>
           <Box>
-            {/* <WatchedMovieList data= {tempWatchedData}/> */}
-            <MovieDetails data={tempWatchedData}/>
+            {selected ? (
+              <MovieDetails
+                data={tempWatchedData}
+                setWatchedMovies={setWatchedMovies}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            ) : (
+              <WatchedMovieList
+                data={tempWatchedData}
+                watchedMovies={watchedMovies}
+                setWatchedMovies={setWatchedMovies}
+              />
+            )}
+            {/* <WatchedMovieList data={tempWatchedData} /> */}
+            {/* <MovieDetails data={tempWatchedData} /> */}
           </Box>
         </Container>
       </div>
