@@ -23,16 +23,23 @@ function App() {
   }
   useEffect(
     function () {
+      const controller = new AbortController();
       async function fetchMovies() {
         setIsLoading(true);
         const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+          {
+            signal: controller.signal,
+          }
         );
         const data = await res.json();
         setMovies(data.Search);
         setIsLoading(false);
       }
       fetchMovies();
+      return function(){
+        controller.abort();
+      }
     },
 
     [query]
