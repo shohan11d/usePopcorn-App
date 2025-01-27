@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import StarRating from './StarRating';
+import Loader from './Loader';
 
 function MovieDetails({ setWatchedMovies, selected, setSelected }) {
   const KEY = '2f74e8e2';
 
   const [selectedMovie, setSelectedMovie] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { Title, Released, Poster, imdbRating, Plot } = selectedMovie;
 
   function handleSetRating(rating) {
@@ -12,47 +14,57 @@ function MovieDetails({ setWatchedMovies, selected, setSelected }) {
   }
 
   function handleSubmit() {
-
     setSelected('');
-    selectedMovie ? setWatchedMovies((movies) => [...movies, selectedMovie]) : null;
+    selectedMovie
+      ? setWatchedMovies((movies) => [...movies, selectedMovie])
+      : null;
   }
 
   useEffect(
     function () {
       async function fetchMovieDetails() {
+        setIsLoading(true);
         const res = await fetch(
           `http://www.omdbapi.com/?apikey=${KEY}&i=${selected}`
         );
         const data = await res.json();
         setSelectedMovie(data);
+        setIsLoading(false);
       }
       fetchMovieDetails();
     },
     [selected]
   );
+
   return (
     <>
-      <div className="flex items-center   bg-[#343a40]">
-        <img src={Poster} className="w-[120px]" />
-        <div className="space-y-5 px-6">
-          <h3 className="text-2xl">{Title}</h3>
-          <p>{Released}</p>
-          <p>⭐ {imdbRating} Average Rating</p>
-        </div>
-      </div>
-      <div className="flex items-center justify-center py-4  ">
-        <StarRating
-          className=""
-          onSetRating={handleSetRating}
-          size={30}
-          maxRating={10}
-        />
-      </div>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="flex items-center   bg-[#343a40]">
+            <img src={Poster} className="w-[120px]" />
+            <div className="space-y-5 px-6">
+              <h3 className="text-2xl">{Title}</h3>
+              <p>{Released}</p>
+              <p>⭐ {imdbRating} Average Rating</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-center py-4  ">
+            <StarRating
+              className=""
+              onSetRating={handleSetRating}
+              size={30}
+              maxRating={10}
+            />
+          </div>
 
-      <div className="flex justify-center ">
-        <button onClick={handleSubmit}>Add Rating</button>
-      </div>
-      <p className="px-5  text-justify">{Plot}</p>
+          <div className="flex justify-center ">
+            <button onClick={handleSubmit}>Add Rating</button>
+          </div>
+          <p className="px-5  text-justify">{Plot}</p>
+        </>
+      )}
     </>
   );
 }
