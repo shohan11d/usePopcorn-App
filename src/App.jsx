@@ -7,43 +7,28 @@ import Search from './components/Search';
 import MovieList from './components/MovieList';
 import MovieDetails from './components/MovieDetails';
 import WatchedMovieList from './components/WatchedMovieList';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Loader from './components/Loader';
+import useMovies from './hooks/useMovies';
+import useStorage from './hooks/useStorage';
 
-const KEY = '2f74e8e2';
 function App() {
-  const [query, setQuery] = useState('harry');
-  const [movies, setMovies] = useState();
-  const [watchedMovies, setWatchedMovies] = useState([]);
+  const [query, setQuery] = useState('');
   const [selected, setSelected] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [movies, isLoading] = useMovies(query);
+  const [value, setValue] = useStorage([], 'watched');
 
   function handleSeleted(id) {
     setSelected((selected) => (selected === id ? '' : id));
   }
-  useEffect(
-    function () {
-      const controller = new AbortController();
-      async function fetchMovies() {
-        setIsLoading(true);
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
-          {
-            signal: controller.signal,
-          }
-        );
-        const data = await res.json();
-        setMovies(data.Search);
-        setIsLoading(false);
-      }
-      fetchMovies();
-      return function(){
-        controller.abort();
-      }
-    },
+  function handleSubmit(selectedMovie) {
+    setValue((value) => [...value, selectedMovie]);
+    setSelected('');
+  }
 
-    [query]
-  );
+  function handleDelete(id) {
+    setValue((movies) => movies.filter((mov) => mov.imdbID !== id));
+  }
   return (
     <>
       <div>
@@ -64,19 +49,16 @@ function App() {
             {selected ? (
               !isLoading ? (
                 <MovieDetails
-                  isLoading={isLoading}
-                  setIsLoading={setIsLoading}
-                  setWatchedMovies={setWatchedMovies}
                   selected={selected}
-                  setSelected={setSelected}
+                  onSubmit={handleSubmit}
                 />
               ) : (
                 <Loader />
               )
             ) : (
               <WatchedMovieList
-                watchedMovies={watchedMovies}
-                setWatchedMovies={setWatchedMovies}
+                onDelete={handleDelete}
+                watchedMovies={value}
               />
             )}
           </Box>

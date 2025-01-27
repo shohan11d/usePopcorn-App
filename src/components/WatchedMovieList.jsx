@@ -1,8 +1,6 @@
-function WatchedMovieList({ watchedMovies, setWatchedMovies }) {
+function WatchedMovieList({ watchedMovies, onDelete }) {
   const data = watchedMovies;
-  function handleDelete(id) {
-    setWatchedMovies((movies) => movies.filter((mov) => mov.imdbID !== id));
-  }
+
 
   function calculate(arr) {
     const sum = arr.reduce((acc, curr) => acc + curr, 0);
@@ -34,7 +32,7 @@ function WatchedMovieList({ watchedMovies, setWatchedMovies }) {
                 <p className="text-md">⭐ {movie.userRating}</p>
                 <button
                   className="bg-red-600"
-                  onClick={() => handleDelete(movie.imdbID)}
+                  onClick={() => onDelete(movie.imdbID)}
                 >
                   x
                 </button>

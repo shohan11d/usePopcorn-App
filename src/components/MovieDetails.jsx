@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import StarRating from './StarRating';
 import Loader from './Loader';
 
-function MovieDetails({ setWatchedMovies, selected, setSelected }) {
+function MovieDetails({ selected, onSubmit }) {
   const KEY = '2f74e8e2';
 
   const [selectedMovie, setSelectedMovie] = useState('');
@@ -11,13 +11,6 @@ function MovieDetails({ setWatchedMovies, selected, setSelected }) {
 
   function handleSetRating(rating) {
     console.log(rating);
-  }
-
-  function handleSubmit() {
-    setSelected('');
-    selectedMovie
-      ? setWatchedMovies((movies) => [...movies, selectedMovie])
-      : null;
   }
 
   useEffect(
@@ -60,7 +53,7 @@ function MovieDetails({ setWatchedMovies, selected, setSelected }) {
           </div>
 
           <div className="flex justify-center ">
-            <button onClick={handleSubmit}>Add Rating</button>
+            <button onClick={() => onSubmit(selectedMovie)}>Add Rating</button>
           </div>
           <p className="px-5  text-justify">{Plot}</p>
         </>
